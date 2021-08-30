@@ -3,10 +3,6 @@ package org.ci.api.clients
 @Grab('org.codehaus.groovy:groovy-json:3.0.8')
 class ApiClient {
 
-    static void main(String[] args) {
-        println("hello")
-    }
-
     static def get(String urlString, LinkedHashMap headers) {
         def connection = getUrlConnectionWithHeaders(urlString, headers)
         connection.setRequestMethod("GET")
@@ -18,9 +14,9 @@ class ApiClient {
         connection.setRequestMethod("POST")
         connection.doOutput = true
         if(body != null){
-        try(def writer = new OutputStreamWriter(connection.getOutputStream())) {
-            writer.write(body)
-          }
+            new OutputStreamWriter(connection.getOutputStream()).withCloseable{writer ->
+                writer.write(body)
+            }
         }
         connection.connect()
         return connection
@@ -29,9 +25,9 @@ class ApiClient {
         def connection = getUrlConnectionWithHeaders(urlString, headers )
         connection.setRequestMethod("PUT")
         connection.doOutput = true
-        if(body != null){
-        try(def writer = new OutputStreamWriter(connection.getOutputStream())) {
-            writer.write(body)
+        if(body != null) {
+          new OutputStreamWriter(connection.getOutputStream()).withCloseable {
+              writer -> writer.write(body)
           }
         }
         connection.connect()
