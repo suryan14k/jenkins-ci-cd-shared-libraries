@@ -9,12 +9,13 @@ import groovy.io.FileType
 class ApiDesignCenterClient {
 
     static void main(String[] args) {
-        def username = ""
-        def password = ""
-        def organizationId = ""
-        def ownerId = ""
-        def projectName = ""
-        def branch = ""
+        def username = "suryan14k"
+        def password = "Letmein_01"
+        def organizationId = "c8a97a61-f4c4-4e40-a2b6-ba13718b421c"
+        def ownerId = "2cc24e16-4c9c-4ce5-ab0a-346f1d3ed80c"
+        def projectName = "API Versioning"
+        def branch = "master"
+        def apiDirPath = "C:\\Users\\suryank\\Downloads\\api"
 
 
         def props = ['username': username,'password': password ]
@@ -35,7 +36,7 @@ class ApiDesignCenterClient {
         def lockStatus = checkProjectLockStatus(props, token,projectId, branch)
         println("check lock status is: " + lockStatus)
 
-        def saveFilesStatus = saveProjectFiles(props, token,projectId, branch)
+        def saveFilesStatus = saveProjectFiles(props, token,projectId, branch, apiDirPath)
         println("saved files " + saveFilesStatus)
     }
 
@@ -47,7 +48,7 @@ class ApiDesignCenterClient {
         request.password = props.password
         def body = JsonOutput.toJson(request)
         def urlString = "https://anypoint.mulesoft.com/accounts/login"
-        def headers=["Content-Type": "application/json","Accept": "application/json"]
+        def headers=["Content-Type": "application/json","Accept": "application/json","Cookie": "..."]
         def connection = ApiClient.post(urlString, body, headers)
         if (connection.responseCode == 200)
         {
@@ -116,14 +117,14 @@ class ApiDesignCenterClient {
     }
 
 
-    static def saveProjectFiles(props, token, projectId, branch)
+    static def saveProjectFiles(props, token, projectId, branch, apiDirPath)
     {
         def boundary = "*****"
         def urlString = "https://anypoint.mulesoft.com/designcenter/api-designer/projects/" + projectId + "/branches/" + branch + "/save/v2"
         def headers= ["x-organization-id": props.organizationId, "x-owner-id": props.ownerId, "Authorization": "Bearer " + token, "Content-Type" : "multipart/form-data;boundary=" + boundary]
         def apiClient = new ApiMultiPartDataClient()
         def connection = apiClient.getConnection(urlString, headers)
-        File apiBaseDir = new File("C:\\Users\\suryank\\Downloads\\api")
+        File apiBaseDir = new File(apiDirPath)
         apiBaseDir.eachFileRecurse(FileType.FILES)  {
             def fileName = getModifiedFileName(apiBaseDir, it)
             apiClient.addFilePart(fileName, it)
