@@ -13,10 +13,11 @@ class ApiClient {
         def connection = getUrlConnectionWithHeaders(urlString, headers )
         connection.setRequestMethod("POST")
         connection.doOutput = true
-        if(body != null){
-            new OutputStreamWriter(connection.getOutputStream()).withCloseable{writer ->
-                writer.write(body)
-            }
+        if(body != null) {
+            def writer = new OutputStreamWriter(connection.getOutputStream())
+            writer.write(body)
+            writer.flush()
+            writer.close()
         }
         connection.connect()
         return connection
@@ -26,9 +27,10 @@ class ApiClient {
         connection.setRequestMethod("PUT")
         connection.doOutput = true
         if(body != null) {
-          new OutputStreamWriter(connection.getOutputStream()).withCloseable {
-              writer -> writer.write(body)
-          }
+            def writer = new OutputStreamWriter(connection.getOutputStream())
+            writer.write(body)
+            writer.flush()
+            writer.close()
         }
         connection.connect()
         return connection
