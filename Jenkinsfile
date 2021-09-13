@@ -4,6 +4,7 @@ pipeline {
     stage('Design Centre Activities') {
       steps {
         echo 'Hello'
+        echo 'Hi'
       }
     }
 
